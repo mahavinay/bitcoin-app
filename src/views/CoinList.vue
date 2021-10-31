@@ -44,14 +44,8 @@
                             {{ coin.symbol }}
                         </td>
                         <td>
-                            <!-- <div
-                                v-for="(coinPrice, index) in filteredCoinPriceList"
-                                :key="index"
-                            >
-                                {{ coinPrice }}
-                            </div> -->
+                            {{ CoinPriceList[rowIndex] }}
                         </td>
-                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -68,9 +62,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions,mapState } from "vuex";
-
-// import { mapState } from "vuex";
+import { mapGetters, mapActions, mapState } from "vuex";
 
 export default {
     data() {
@@ -86,10 +78,10 @@ export default {
     components: {},
 
     created() {
-        if (!this.coinList.length) {
-            this.getCoinList();
-        }
-
+        // if (!this.coinList.length) {
+        //     this.getCoinList();
+        // }
+        this.getCoinList();
         //this.getSortCoinByKey();
         //this.getCoinPriceList(id);
     },
@@ -103,40 +95,54 @@ export default {
             User: "stateUser",
             CoinPriceList: "stateCoinPriceList",
         }),
-              ...mapState({
-          coinList: state => state.auth.coinList,
+        ...mapState({
+            coinList: (state) => state.auth.coinList,
         }),
     },
 
     methods: {
-        ...mapActions(["getCoinList", "getSortCoinByKey"]),
+        ...mapActions(["getCoinList"]),
 
+        // sortCoinByKey(prop) {
+        //     if (this.order == "asc") {
+        //         let copyCoinList = this.CoinList.sort((a, b) =>
+        //             a[prop].localeCompare(b[prop])
+        //         );
+        //         this.order = "desc";
+
+        //         this.$store.commit("setCoinList", copyCoinList);
+        //         console.log("CopyList", copyCoinList);
+        //         console.log("CoinList", this.coinList);
+        //     } else {
+        //         let copyCoinList = this.CoinList.sort((a, b) =>
+        //             b[prop].localeCompare(a[prop])
+        //         );
+
+        //         this.$store.commit("setCoinList", copyCoinList);
+        //     }
+        // },
+
+
+        
         sortCoinByKey(prop) {
-          
             if (this.order == "asc") {
-                let copyCoinList = this.CoinList.sort((a, b) =>
+                this.CoinList.sort((a, b) =>
                     a[prop].localeCompare(b[prop])
                 );
                 this.order = "desc";
-                // commit("setCoinList", this.CoinList);
-                // this.$store.state.CoinList;
-                // this.$store.commit("sortCoinByKey");
-                this.$store.commit("setCoinList", copyCoinList);
-                console.log("CopyList",copyCoinList);
-                 console.log("CoinList",this.coinList);
-                
+
+                // this.$store.commit("setCoinList", copyCoinList);
+                // console.log("CopyList", copyCoinList);
+                console.log("CoinList", this.coinList);
             } else {
-                let copyCoinList = this.CoinList.sort((a, b) =>
+                this.CoinList.sort((a, b) =>
                     b[prop].localeCompare(a[prop])
                 );
-                // this.order = "asc";
-                // commit("setCoinList", this.CoinList);
-                // this.$store.state.CoinList;
-                // this.$store.commit("sortCoinByKey");
-                this.$store.commit("auth/setCoinList", copyCoinList);
+
+                // this.$store.commit("setCoinList", copyCoinList);
             }
-            // return store.state.coinList;
         },
+
     },
 };
 </script>

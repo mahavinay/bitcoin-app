@@ -43,36 +43,23 @@ const actions = {
             }
             console.log("priceList", state.coinPriceList);
             commit("setCoinList", res.data.slice(0, 30));
+            console.log("priceList", state.coinPriceList);
             // store.commit('getCoinList');
             // return store.state.coinList;
             commit("setCoinPriceList", state.coinPriceList);
+            // commit("setCoinList", state.coinList.slice(0,30))
+            console.log("coin...auth", state.coinList);
         } catch (err) {
             console.log("err", err);
         }
-        // store.commit('getCoinList');
+   
     },
 
-    // getSortCoinByKey({ commit }, prop) {
-    //     if (this.order == "asc") {
-    //         this.CoinList.sort((a, b) => a[prop].localeCompare(b[prop]));
-    //         this.order = "desc";
-    //         commit("setCoinList", this.CoinList);
-    //         // this.$store.state.CoinList;
-    //         // this.$store.commit("sortCoinByKey");
-    //     } else {
-    //         this.CoinList.sort((a, b) => b[prop].localeCompare(a[prop]));
-    //         this.order = "asc";
-    //         commit("setCoinList", this.CoinList);
-    //         // this.$store.state.CoinList;
-    //         // this.$store.commit("sortCoinByKey");
-    //     }
-    //     // return store.state.coinList;
-    // },
+    
 
     async logout({ commit }) {
         let user = null;
         commit("logout", user);
-        // store.commit('logout');
     },
 };
 
