@@ -59,28 +59,18 @@
         <div v-else>
             <h1>Loading Coin....</h1>
         </div>
-        <div>
+        <!-- <div>
             <button id="loadButton" v-on:click="displayCoin()">
                 Load more
             </button>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-// import Vue from "vue";
-// import Vuex from "vuex";
-// import createPersistedState from "vuex-persistedstate";
+import { mapGetters, mapActions,mapState } from "vuex";
 
-// ue.use(Vuex);
-
-// const store = new Vuex.Store({
-//     state: {
-//         coinList: [],
-//     },
-//     plugins: [createPersistedState()],
-// });
+// import { mapState } from "vuex";
 
 export default {
     data() {
@@ -96,63 +86,56 @@ export default {
     components: {},
 
     created() {
-        this.getCoinList();
+        if (!this.coinList.length) {
+            this.getCoinList();
+        }
+
+        //this.getSortCoinByKey();
         //this.getCoinPriceList(id);
     },
 
     computed: {
-        // async getCoinList({ commit }) {
-        //     try {
-        //         let res = await axios.get(
-        //             "https://api.coinpaprika.com/v1/coins",
-        //             {
-        //                 withCredentials: false,
-        //             }
-        //         );
-
-        //         for (var i = 0; i <= 10; i++) {
-        //             var coinResponse = await axios.get(
-        //                 `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
-        //                 {
-        //                     withCredentials: false,
-        //                 }
-        //             );
-        //             state.coinPriceList.push(
-        //                 coinResponse.data.quotes.USD.price
-        //             );
-        //         }
-        //         console.log("priceList", state.coinPriceList);
-        //         commit("setCoinList", res.data.slice(0, 30));
-        //         // store.commit('getCoinList');
-        //         // return store.state.coinList;
-        //         //commit("setCoinPriceList", coinResponse.data.quotes.USD);
-        //     } catch (err) {
-        //         console.log("err", err);
-        //     }
-        //     // store.commit('getCoinList');
-        //     store.commit("getCoinList");
+        // coinlist() {
+        //     return this.$store.state.coinList;
         // },
-
         ...mapGetters({
             CoinList: "stateCoinList",
             User: "stateUser",
             CoinPriceList: "stateCoinPriceList",
         }),
+              ...mapState({
+          coinList: state => state.auth.coinList,
+        }),
     },
 
     methods: {
-        ...mapActions(["getCoinList"]),
+        ...mapActions(["getCoinList", "getSortCoinByKey"]),
 
         sortCoinByKey(prop) {
+          
             if (this.order == "asc") {
-                this.CoinList.sort((a, b) => a[prop].localeCompare(b[prop]));
+                let copyCoinList = this.CoinList.sort((a, b) =>
+                    a[prop].localeCompare(b[prop])
+                );
                 this.order = "desc";
-                // store.state.CoinList;
+                // commit("setCoinList", this.CoinList);
+                // this.$store.state.CoinList;
+                // this.$store.commit("sortCoinByKey");
+                this.$store.commit("setCoinList", copyCoinList);
+                console.log("CopyList",copyCoinList);
+                 console.log("CoinList",this.coinList);
+                
             } else {
-                this.CoinList.sort((a, b) => b[prop].localeCompare(a[prop]));
-                this.order = "asc";
-                // store.state.CoinList;
+                let copyCoinList = this.CoinList.sort((a, b) =>
+                    b[prop].localeCompare(a[prop])
+                );
+                // this.order = "asc";
+                // commit("setCoinList", this.CoinList);
+                // this.$store.state.CoinList;
+                // this.$store.commit("sortCoinByKey");
+                this.$store.commit("auth/setCoinList", copyCoinList);
             }
+            // return store.state.coinList;
         },
     },
 };

@@ -32,7 +32,7 @@ const actions = {
                 withCredentials: false,
             });
 
-            for (var i = 0; i <= 10; i++) {
+            for (var i = 0; i <= 30; i++) {
                 var coinResponse = await axios.get(
                     `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
                     {
@@ -45,27 +45,28 @@ const actions = {
             commit("setCoinList", res.data.slice(0, 30));
             // store.commit('getCoinList');
             // return store.state.coinList;
-            //commit("setCoinPriceList", coinResponse.data.quotes.USD);
+            commit("setCoinPriceList", state.coinPriceList);
         } catch (err) {
             console.log("err", err);
         }
         // store.commit('getCoinList');
     },
 
-    // async getCoinPriceList({ commit }, coinId) {
-    //     console.log("get");
-    //     try {
-    //         let res = await axios.get(
-    //             `https://api.coinpaprika.com/v1/tickers/${coinId}`,
-    //             {
-    //                 withCredentials: false,
-    //             }
-    //         );
-    //         // console.log("id", res.data.total_supply);
-    //         commit("setCoinPriceList", res.data);
-    //     } catch (err) {
-    //         console.log("err", err);
+    // getSortCoinByKey({ commit }, prop) {
+    //     if (this.order == "asc") {
+    //         this.CoinList.sort((a, b) => a[prop].localeCompare(b[prop]));
+    //         this.order = "desc";
+    //         commit("setCoinList", this.CoinList);
+    //         // this.$store.state.CoinList;
+    //         // this.$store.commit("sortCoinByKey");
+    //     } else {
+    //         this.CoinList.sort((a, b) => b[prop].localeCompare(a[prop]));
+    //         this.order = "asc";
+    //         commit("setCoinList", this.CoinList);
+    //         // this.$store.state.CoinList;
+    //         // this.$store.commit("sortCoinByKey");
     //     }
+    //     // return store.state.coinList;
     // },
 
     async logout({ commit }) {
