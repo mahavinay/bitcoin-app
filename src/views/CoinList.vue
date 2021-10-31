@@ -33,10 +33,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr
-                        v-for="(coin, rowIndex) in filteredCoins"
-                        :key="rowIndex"
-                    >
+                    <tr v-for="(coin, rowIndex) in CoinList" :key="rowIndex">
                         <td>
                             {{ coin.rank }}
                         </td>
@@ -47,16 +44,14 @@
                             {{ coin.symbol }}
                         </td>
                         <td>
-                            <div
-                                v-for="(coinPrice, rowIndex) in CoinPriceList"
-                                :key="rowIndex"
+                            <!-- <div
+                                v-for="(coinPrice, index) in filteredCoinPriceList"
+                                :key="index"
                             >
                                 {{ coinPrice }}
-                            </div>
+                            </div> -->
                         </td>
-                        <td>
-                          
-                        </td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -74,6 +69,18 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+// import Vue from "vue";
+// import Vuex from "vuex";
+// import createPersistedState from "vuex-persistedstate";
+
+// ue.use(Vuex);
+
+// const store = new Vuex.Store({
+//     state: {
+//         coinList: [],
+//     },
+//     plugins: [createPersistedState()],
+// });
 
 export default {
     data() {
@@ -94,26 +101,57 @@ export default {
     },
 
     computed: {
+        // async getCoinList({ commit }) {
+        //     try {
+        //         let res = await axios.get(
+        //             "https://api.coinpaprika.com/v1/coins",
+        //             {
+        //                 withCredentials: false,
+        //             }
+        //         );
+
+        //         for (var i = 0; i <= 10; i++) {
+        //             var coinResponse = await axios.get(
+        //                 `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
+        //                 {
+        //                     withCredentials: false,
+        //                 }
+        //             );
+        //             state.coinPriceList.push(
+        //                 coinResponse.data.quotes.USD.price
+        //             );
+        //         }
+        //         console.log("priceList", state.coinPriceList);
+        //         commit("setCoinList", res.data.slice(0, 30));
+        //         // store.commit('getCoinList');
+        //         // return store.state.coinList;
+        //         //commit("setCoinPriceList", coinResponse.data.quotes.USD);
+        //     } catch (err) {
+        //         console.log("err", err);
+        //     }
+        //     // store.commit('getCoinList');
+        //     store.commit("getCoinList");
+        // },
+
         ...mapGetters({
             CoinList: "stateCoinList",
             User: "stateUser",
             CoinPriceList: "stateCoinPriceList",
         }),
-        filteredCoins() {
-            return this.CoinList.slice(0, 30);
-        },
     },
 
     methods: {
-        ...mapActions(["getCoinList", "getCoinPriceList"]),
+        ...mapActions(["getCoinList"]),
 
         sortCoinByKey(prop) {
             if (this.order == "asc") {
                 this.CoinList.sort((a, b) => a[prop].localeCompare(b[prop]));
                 this.order = "desc";
+                // store.state.CoinList;
             } else {
                 this.CoinList.sort((a, b) => b[prop].localeCompare(a[prop]));
                 this.order = "asc";
+                // store.state.CoinList;
             }
         },
     },

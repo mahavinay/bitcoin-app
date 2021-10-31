@@ -18,11 +18,12 @@ const actions = {
         let UserForm = new FormData();
         UserForm.append("username", form.username);
         UserForm.append("password", form.password);
-        await dispatch("LogIn", UserForm);
+        await dispatch("login", UserForm);
     },
 
-    LogIn({ commit }, user) {
+    login({ commit }, user) {
         commit("setUser", user.get("username"));
+        // store.commit('Login')
     },
 
     async getCoinList({ commit }) {
@@ -41,11 +42,14 @@ const actions = {
                 state.coinPriceList.push(coinResponse.data.quotes.USD.price);
             }
             console.log("priceList", state.coinPriceList);
-            commit("setCoinList", res.data);
+            commit("setCoinList", res.data.slice(0, 30));
+            // store.commit('getCoinList');
+            // return store.state.coinList;
             //commit("setCoinPriceList", coinResponse.data.quotes.USD);
         } catch (err) {
             console.log("err", err);
         }
+        // store.commit('getCoinList');
     },
 
     // async getCoinPriceList({ commit }, coinId) {
@@ -67,6 +71,7 @@ const actions = {
     async logout({ commit }) {
         let user = null;
         commit("logout", user);
+        // store.commit('logout');
     },
 };
 
