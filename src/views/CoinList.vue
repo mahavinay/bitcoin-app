@@ -29,7 +29,8 @@
                             >
                         </th> -->
                         <th>PRICE</th>
-                        <th>EXCHANGES</th>
+                        <th>EXCHANGE COIN NAME</th>
+                        <th>CURRENCIES ALLOWED TO TRADE</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,8 +45,14 @@
                             {{ coin.symbol }}
                         </td>
                         <td>
-                            {{ CoinPriceList[rowIndex] }}
+                            {{ coin.price }}
                         </td>
+                        <!-- <td>
+                            {{ coin.exchange }}
+                        </td>
+                        <td>
+                            {{ coin.currencies }}
+                        </td> -->
                     </tr>
                 </tbody>
             </table>
@@ -53,16 +60,19 @@
         <div v-else>
             <h1>Loading Coin....</h1>
         </div>
-        <!-- <div>
-            <button id="loadButton" v-on:click="displayCoin()">
-                Load more
+         <div>
+            <button id="loadButton" v-on:click="loadMore()">
+                Load More
             </button>
-        </div> -->
+            <!-- <button id="loadButton" v-on:click="refreshUpdatedPrice()">
+                Refresh Price
+            </button> -->
+        </div> 
     </div>
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
     data() {
@@ -81,68 +91,57 @@ export default {
         // if (!this.coinList.length) {
         //     this.getCoinList();
         // }
-        this.getCoinList();
-        //this.getSortCoinByKey();
-        //this.getCoinPriceList(id);
+
+          this.getCoinList();
+         //this.getNextCoinList();
+         
+        
     },
 
     computed: {
-        // coinlist() {
-        //     return this.$store.state.coinList;
-        // },
+      
         ...mapGetters({
             CoinList: "stateCoinList",
             User: "stateUser",
-            CoinPriceList: "stateCoinPriceList",
         }),
-        ...mapState({
-            coinList: (state) => state.auth.coinList,
-        }),
+        // ...mapState({
+        //     coinList: (state) => state.auth.coinList,
+        // }),
+
+        //   filteredCoins() {
+        //     return this.CoinList.slice(0, 30);
+        // },
     },
 
     methods: {
-        ...mapActions(["getCoinList"]),
+        ...mapActions(["getCoinList","getNextCoinList"]),
 
-        // sortCoinByKey(prop) {
-        //     if (this.order == "asc") {
-        //         let copyCoinList = this.CoinList.sort((a, b) =>
-        //             a[prop].localeCompare(b[prop])
-        //         );
-        //         this.order = "desc";
-
-        //         this.$store.commit("setCoinList", copyCoinList);
-        //         console.log("CopyList", copyCoinList);
-        //         console.log("CoinList", this.coinList);
-        //     } else {
-        //         let copyCoinList = this.CoinList.sort((a, b) =>
-        //             b[prop].localeCompare(a[prop])
-        //         );
-
-        //         this.$store.commit("setCoinList", copyCoinList);
-        //     }
-        // },
-
-
-        
-        sortCoinByKey(prop) {
-            if (this.order == "asc") {
-                this.CoinList.sort((a, b) =>
-                    a[prop].localeCompare(b[prop])
-                );
-                this.order = "desc";
-
-                // this.$store.commit("setCoinList", copyCoinList);
-                // console.log("CopyList", copyCoinList);
-                console.log("CoinList", this.coinList);
-            } else {
-                this.CoinList.sort((a, b) =>
-                    b[prop].localeCompare(a[prop])
-                );
-
-                // this.$store.commit("setCoinList", copyCoinList);
-            }
+        loadMore() {
+            this.getNextCoinList();
+            return (this.isClicked = true);
         },
 
+        sortCoinByKey(prop) {
+            console.log("sort");
+
+            if (this.order == "asc") {
+                console.log(this.order);
+                var copyCoinList = this.CoinList.sort((a, b) =>
+                    a[prop].localeCompare(b[prop])
+                );
+
+                this.order = "desc";
+
+                this.$store.commit("setCoinList", copyCoinList);
+            } else {
+                console.log(this.order);
+                copyCoinList = this.CoinList.sort((a, b) =>
+                    b[prop].localeCompare(a[prop])
+                );
+                this.order = "asc";
+                this.$store.commit("setCoinList", copyCoinList);
+            }
+        },
     },
 };
 </script>

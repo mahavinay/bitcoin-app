@@ -1,16 +1,19 @@
 import axios from "axios";
+// import _ from 'lodash';
 
 const state = {
     user: null,
     coinList: [],
-    coinPriceList: [],
+    limit: 10,
+    nextPage: "",
 };
 
 const getters = {
     isAuthenticated: (state) => !!state.user,
     stateCoinList: (state) => state.coinList,
     stateUser: (state) => state.user,
-    stateCoinPriceList: (state) => state.coinPriceList,
+    stateNextPage: (state) => state.nextPage,
+    stateLimit: (state) => state.limit,
 };
 
 const actions = {
@@ -26,36 +29,60 @@ const actions = {
         // store.commit('Login')
     },
 
+    
+
     async getCoinList({ commit }) {
         try {
-            let res = await axios.get("https://api.coinpaprika.com/v1/coins", {
+            var res = await axios.get("https://api.coinpaprika.com/v1/coins", {
+               
                 withCredentials: false,
             });
 
-            for (var i = 0; i <= 30; i++) {
+    
+            for (var i = 0; i < state.limit; i++) {
                 var coinResponse = await axios.get(
                     `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
                     {
                         withCredentials: false,
                     }
                 );
-                state.coinPriceList.push(coinResponse.data.quotes.USD.price);
+                res.data[i].price = coinResponse.data.quotes.USD.price;
+
             }
-            console.log("priceList", state.coinPriceList);
-            commit("setCoinList", res.data.slice(0, 30));
-            console.log("priceList", state.coinPriceList);
-            // store.commit('getCoinList');
-            // return store.state.coinList;
-            commit("setCoinPriceList", state.coinPriceList);
-            // commit("setCoinList", state.coinList.slice(0,30))
-            console.log("coin...auth", state.coinList);
+            commit("setCoinList", res.data.slice(0, state.limit));
+            commit("setLimit", state.limit)
+            commit("setNextPage", 10);
         } catch (err) {
             console.log("err", err);
         }
-   
     },
 
+    async getNextCoinList({ commit, state }) {
+        if(state.nextPage) {
+        try {
+
+            var res = await axios.get("https://api.coinpaprika.com/v1/coins", {
+               
+                withCredentials: false,
+            });
     
+            for (var i = state.nextPage; i < state.nextPage+state.limit; i++) {
+                var coinResponse = await axios.get(
+                    `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
+                    {
+                        withCredentials: false,
+                    }
+                );
+                res.data[i].price = coinResponse.data.quotes.USD.price;
+                state.coinList.push(res.data[i]);
+
+            }
+            commit("setNextPage", state.nextPage+state.limit);
+        } catch (err) {
+            console.log("err", err);
+        }
+    }
+    },
 
     async logout({ commit }) {
         let user = null;
@@ -72,12 +99,17 @@ const mutations = {
         state.coinList = coinList;
     },
 
-    setCoinPriceList(state, coinPriceList) {
-        state.coinPriceList = coinPriceList;
+    setNextPage(state, nextPage) {
+        console.log("Next ", nextPage);
+        state.nextPage = nextPage;
     },
 
     logout(state, user) {
         state.user = user;
+    },
+
+    setLimit(state, limit) {
+        state.limit = limit;
     },
 };
 
