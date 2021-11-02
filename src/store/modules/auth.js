@@ -1,10 +1,9 @@
 import axios from "axios";
-// import _ from 'lodash';
 
 const state = {
     user: null,
     coinList: [],
-    limit: 10,
+    limit: 8,
     nextPage: "",
 };
 
@@ -26,11 +25,10 @@ const actions = {
 
     login({ commit }, user) {
         commit("setUser", user.get("username"));
-        // store.commit('Login')
     },
 
     async getCoinList({ commit }) {
-        if (!state.coinList) {
+        commit("setLimit", state.limit);
             try {
                 var res = await axios.get(
                     "https://api.coinpaprika.com/v1/coins",
@@ -49,12 +47,11 @@ const actions = {
                     res.data[i].price = coinResponse.data.quotes.USD.price;
                 }
                 commit("setCoinList", res.data.slice(0, state.limit));
-                commit("setLimit", state.limit);
-                commit("setNextPage", 10);
+                commit("setNextPage",  state.limit);
             } catch (err) {
                 console.log("err", err);
             }
-        }
+        
     },
 
     async getNextCoinList({ commit, state }) {
@@ -88,6 +85,29 @@ const actions = {
         }
     },
 
+    async getRefreshPrice({ state, dispatch }, index) {
+        for (
+            var i = index;
+            i < index+state.limit;
+            i++
+        ) {
+            var coinResponse = await axios.get(
+                `https://api.coinpaprika.com/v1/tickers/${state.coinList[i].id}`,
+                {
+                    withCredentials: false,
+                }
+            );
+            state.coinList[i].price = coinResponse.data.quotes.USD.price;
+        }
+
+        if(i<state.nextPage) {
+
+        setTimeout(() => {
+            dispatch("getRefreshPrice", i);
+        }, 1000);
+    }
+    },
+
     async logout({ commit }) {
         let user = null;
         commit("logout", user);
@@ -104,7 +124,6 @@ const mutations = {
     },
 
     setNextPage(state, nextPage) {
-        console.log("Next ", nextPage);
         state.nextPage = nextPage;
     },
 

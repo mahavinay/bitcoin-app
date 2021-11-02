@@ -19,18 +19,8 @@
                             >
                         </th>
                         <th>COIN SYMBOL</th>
-                        <!-- <th>
-                            <a
-                                href="#"
-                                data-column="hair_color"
-                                data-order="desc"
-                                v-on:click="sortCoinByKey('hair_color')"
-                                >HAIR_COLOR</a
-                            >
-                        </th> -->
                         <th>PRICE</th>
-                        <th>EXCHANGE COIN NAME</th>
-                        <th>CURRENCIES ALLOWED TO TRADE</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -47,12 +37,6 @@
                         <td>
                             {{ coin.price }}
                         </td>
-                        <!-- <td>
-                            {{ coin.exchange }}
-                        </td>
-                        <td>
-                            {{ coin.currencies }}
-                        </td> -->
                     </tr>
                 </tbody>
             </table>
@@ -64,9 +48,9 @@
             <button id="loadButton" v-on:click="loadMore()">
                 Load More
             </button>
-            <!-- <button id="loadButton" v-on:click="refreshUpdatedPrice()">
+            <button id="loadButton" v-on:click="refreshPrice()">
                 Refresh Price
-            </button> -->
+            </button>
         </div> 
     </div>
 </template>
@@ -88,14 +72,7 @@ export default {
     components: {},
 
     created() {
-        // if (!this.coinList.length) {
-        //     this.getCoinList();
-        // }
-
           this.getCoinList();
-         //this.getNextCoinList();
-         
-        
     },
 
     computed: {
@@ -104,37 +81,30 @@ export default {
             CoinList: "stateCoinList",
             User: "stateUser",
         }),
-        // ...mapState({
-        //     coinList: (state) => state.auth.coinList,
-        // }),
-
-        //   filteredCoins() {
-        //     return this.CoinList.slice(0, 30);
-        // },
+       
     },
 
     methods: {
-        ...mapActions(["getCoinList","getNextCoinList"]),
+        ...mapActions(["getCoinList","getNextCoinList","getRefreshPrice"]),
 
         loadMore() {
             this.getNextCoinList();
             return (this.isClicked = true);
         },
 
-        sortCoinByKey(prop) {
-            console.log("sort");
+         refreshPrice() {
+            this.getRefreshPrice(0);
+            return (this.isClicked = true);
+        },
 
+        sortCoinByKey(prop) {
             if (this.order == "asc") {
-                console.log(this.order);
                 var copyCoinList = this.CoinList.sort((a, b) =>
                     a[prop].localeCompare(b[prop])
                 );
-
                 this.order = "desc";
-
                 this.$store.commit("setCoinList", copyCoinList);
             } else {
-                console.log(this.order);
                 copyCoinList = this.CoinList.sort((a, b) =>
                     b[prop].localeCompare(a[prop])
                 );
