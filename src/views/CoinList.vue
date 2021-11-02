@@ -45,7 +45,7 @@
                         <td>
                             {{ coin.price }}
                             <button
-                                id="loadButton"
+                                id="refreshButton"
                                 v-on:click="refreshThisCoinPrice(coin.id)"
                             >
                                 Refresh Coin Price
@@ -229,6 +229,15 @@ ul {
     color: white;
 }
 
+#refreshButton{
+    background-color: #4caf50;
+    color: white;
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: 30px;
+    margin-top: 20px;
+    margin-left: 20px;
+}
 #loadButton {
     background-color: #4caf50;
     color: white;
