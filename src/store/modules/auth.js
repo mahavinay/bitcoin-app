@@ -6,6 +6,7 @@ const state = {
     coinList: [],
     limit: 10,
     nextPage: "",
+    // completeCoinList: [],
 };
 
 const getters = {
@@ -14,6 +15,7 @@ const getters = {
     stateUser: (state) => state.user,
     stateNextPage: (state) => state.nextPage,
     stateLimit: (state) => state.limit,
+    // stateCompleteCoinList: (state) => state.completeCoinList,
 };
 
 const actions = {
@@ -29,8 +31,12 @@ const actions = {
         // store.commit('Login')
     },
 
-    async getCoinList({ commit, dispatch }) {
-        // state.coinList.slice(0,state.coinList.length)
+    async getCoinList({ dispatch, state }) {
+        // state.coinList.splice(0, state.coinList.length);
+         console.log("on load", state.coinList);
+         console.log("state.coinList.length", state.coinList.length)
+        // state.completeCoinList.slice(0, state.completeCoinList.length);
+        // console.log("complete",state.completeCoinList);
         if (!state.coinList.length) {
             try {
                 var res = await axios.get(
@@ -40,11 +46,15 @@ const actions = {
                     }
                 );
                 // console.log(res);
-                for (var i = 0; i < state.limit; i++) {
-                    setTimeout(() => {
-                        dispatch("getPriceWithLimit", res);
-                    }, 2000);
-                }
+                // for (let j=0; j<3; j++){
+                // for (var i = 0; i < state.limit; i++) {
+                setTimeout(() => {
+                    dispatch("getPriceWithLimit", res);
+                }, 3000);
+                // }
+
+                // }
+
                 // console.log(timer);
                 // for (var i = 0; i < state.limit; i++) {
                 //     var coinResponse = await axios.get(
@@ -55,26 +65,39 @@ const actions = {
                 //     );
                 //     res.data[i].price = coinResponse.data.quotes.USD.price;
                 // }
-                commit("setCoinList", res.data.slice(0, state.limit));
-                commit("setLimit", state.limit);
-                commit("setNextPage", 10);
             } catch (err) {
                 console.log("err", err);
             }
         }
     },
 
-    async getPriceWithLimit({ state }, data) {
+    async getPriceWithLimit({ state, commit }, dataFromApiResponse) {
         for (var i = 0; i < state.limit; i++) {
+            console.log(dataFromApiResponse);
             var coinResponse = await axios.get(
-                `https://api.coinpaprika.com/v1/tickers/${data.data[i].id}`,
+                `https://api.coinpaprika.com/v1/tickers/${dataFromApiResponse.data[i].id}`,
                 {
                     withCredentials: false,
                 }
             );
-            data.data[i].price = coinResponse.data.quotes.USD.price;
+
+            dataFromApiResponse.data[i].price =
+                coinResponse.data.quotes.USD.price;
         }
+        console.log(dataFromApiResponse.data.slice(0, 10));
+        commit("setCoinList", dataFromApiResponse.data.slice(0, state.limit));
+        commit("setLimit", state.limit);
+        // commit("setNextPage", 10);
+        console.log("dealyed", state.coinList);
         ///update the code
+        // state.completeCoinList.push(dataFromApiResponse.data.slice(0,10));
+        // console.log("complete",state.completeCoinList);
+        // console.log(state.completeCoinList.length);
+        // commit("setCompletCoinList", state.completCoinList);
+
+        // commit("setCoinList", data.data.slice(0, state.limit));
+        // commit("setLimit", state.limit);
+        // commit("setNextPage", 10);
     },
 
     async getNextCoinList({ commit, state }) {
@@ -199,6 +222,12 @@ const mutations = {
     setLimit(state, limit) {
         state.limit = limit;
     },
+
+    // setCompleteCoinList(state, completeCoinList) {
+    //     console.log(state.completeCoinList.length);
+    //     state.completeCoinList = completeCoinList;
+
+    // },
 };
 
 export default {

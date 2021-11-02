@@ -113,7 +113,7 @@ export default {
     },
 
     methods: {
-        ...mapActions(["getCoinList", "getNextCoinList", "getUpdatedPrice", "getThisCoinPrice"]),
+        ...mapActions(["getCoinList", "getNextCoinList", "getUpdatedPrice", "getPriceWithLimit", "getThisCoinPrice"]),
 
         loadMore() {
             this.getNextCoinList();
