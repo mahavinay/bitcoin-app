@@ -29,59 +29,63 @@ const actions = {
         // store.commit('Login')
     },
 
-    
-
     async getCoinList({ commit }) {
-        try {
-            var res = await axios.get("https://api.coinpaprika.com/v1/coins", {
-               
-                withCredentials: false,
-            });
-
-    
-            for (var i = 0; i < state.limit; i++) {
-                var coinResponse = await axios.get(
-                    `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
+        if (!state.coinList) {
+            try {
+                var res = await axios.get(
+                    "https://api.coinpaprika.com/v1/coins",
                     {
                         withCredentials: false,
                     }
                 );
-                res.data[i].price = coinResponse.data.quotes.USD.price;
 
+                for (var i = 0; i < state.limit; i++) {
+                    var coinResponse = await axios.get(
+                        `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
+                        {
+                            withCredentials: false,
+                        }
+                    );
+                    res.data[i].price = coinResponse.data.quotes.USD.price;
+                }
+                commit("setCoinList", res.data.slice(0, state.limit));
+                commit("setLimit", state.limit);
+                commit("setNextPage", 10);
+            } catch (err) {
+                console.log("err", err);
             }
-            commit("setCoinList", res.data.slice(0, state.limit));
-            commit("setLimit", state.limit)
-            commit("setNextPage", 10);
-        } catch (err) {
-            console.log("err", err);
         }
     },
 
     async getNextCoinList({ commit, state }) {
-        if(state.nextPage) {
-        try {
-
-            var res = await axios.get("https://api.coinpaprika.com/v1/coins", {
-               
-                withCredentials: false,
-            });
-    
-            for (var i = state.nextPage; i < state.nextPage+state.limit; i++) {
-                var coinResponse = await axios.get(
-                    `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
+        if (state.nextPage) {
+            try {
+                var res = await axios.get(
+                    "https://api.coinpaprika.com/v1/coins",
                     {
                         withCredentials: false,
                     }
                 );
-                res.data[i].price = coinResponse.data.quotes.USD.price;
-                state.coinList.push(res.data[i]);
 
+                for (
+                    var i = state.nextPage;
+                    i < state.nextPage + state.limit;
+                    i++
+                ) {
+                    var coinResponse = await axios.get(
+                        `https://api.coinpaprika.com/v1/tickers/${res.data[i].id}`,
+                        {
+                            withCredentials: false,
+                        }
+                    );
+                    res.data[i].price = coinResponse.data.quotes.USD.price;
+                    state.coinList.push(res.data[i]);
+                }
+                commit("setNextPage", state.nextPage + state.limit);
+            } catch (err) {
+                console.log("err", err);
             }
-            commit("setNextPage", state.nextPage+state.limit);
-        } catch (err) {
-            console.log("err", err);
         }
-    }
     },
 
     async logout({ commit }) {
