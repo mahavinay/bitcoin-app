@@ -30,7 +30,8 @@ const actions = {
     },
 
     async getCoinList({ commit }) {
-        if (!state.coinList) {
+        // state.coinList.slice(0,state.coinList.length)
+        if (!state.coinList.length) {
             try {
                 var res = await axios.get(
                     "https://api.coinpaprika.com/v1/coins",
@@ -85,6 +86,77 @@ const actions = {
             } catch (err) {
                 console.log("err", err);
             }
+        }
+    },
+
+    async getUpdatedPrice({ commit, state }) {
+        try {
+            console.log(state.coinList.length);
+            for (let i = 0; i < 1; i++) {
+                // console.log("update", state.coinList[i].id);
+                var coinResponse = await axios.get(
+                    `https://api.coinpaprika.com/v1/tickers/${state.coinList[i].id}`,
+                    {
+                        withCredentials: false,
+                    }
+                );
+
+                if (
+                    state.coinList[i].price !==
+                    coinResponse.data.quotes.USD.price
+                ) {
+                    console.log("change");
+                    console.log(
+                        state.coinList[i].price,
+                        coinResponse.data.quotes.USD.price
+                    );
+                }
+
+                // state.coinList[i].price = coinResponse.data.quotes.USD.price;
+
+                // state.coinList.push(state.coinList[i]);
+            }
+            commit("setCoinList", state.coinList);
+
+            //let coinPrice = state.coinList.find(coin => coin.id === sta)
+        } catch (err) {
+            console.log("err", err);
+        }
+    },
+
+    async getThisCoinPrice({ state, commit }, data) {
+        console.log("get coin", data);
+        try {
+            // for (let i = 0; i < 1; i++) {
+            // console.log("update", state.coinList[i].id);
+            var coinResponse = await axios.get(
+                `https://api.coinpaprika.com/v1/tickers/${data}`,
+                {
+                    withCredentials: false,
+                }
+            );
+
+            
+            state.coinList.filter((coin) => {
+                // console.log(state.coinList);
+                if (coin.id === data) {
+                         if (
+                coin.price !==
+                coinResponse.data.quotes.USD.price
+            ) {
+                console.log("change");
+                
+            }
+
+                    coin.price = coinResponse.data.quotes.USD.price;
+                }
+            });
+
+       
+
+            commit("setCoinList", state.coinList);
+        } catch (err) {
+            console.log("err", err);
         }
     },
 

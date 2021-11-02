@@ -29,8 +29,6 @@
                             >
                         </th> -->
                         <th>PRICE</th>
-                        <th>EXCHANGE COIN NAME</th>
-                        <th>CURRENCIES ALLOWED TO TRADE</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,6 +44,12 @@
                         </td>
                         <td>
                             {{ coin.price }}
+                            <button
+                                id="loadButton"
+                                v-on:click="refreshThisCoinPrice(coin.id)"
+                            >
+                                Refresh Coin Price
+                            </button>
                         </td>
                         <!-- <td>
                             {{ coin.exchange }}
@@ -60,14 +64,12 @@
         <div v-else>
             <h1>Loading Coin....</h1>
         </div>
-         <div>
-            <button id="loadButton" v-on:click="loadMore()">
-                Load More
-            </button>
-            <!-- <button id="loadButton" v-on:click="refreshUpdatedPrice()">
+        <div>
+            <button id="loadButton" v-on:click="loadMore()">Load More</button>
+            <button id="loadButton" v-on:click="refreshPrice()">
                 Refresh Price
-            </button> -->
-        </div> 
+            </button>
+        </div>
     </div>
 </template>
 
@@ -92,14 +94,11 @@ export default {
         //     this.getCoinList();
         // }
 
-          this.getCoinList();
-         //this.getNextCoinList();
-         
-        
+        this.getCoinList();
+        //this.getNextCoinList();
     },
 
     computed: {
-      
         ...mapGetters({
             CoinList: "stateCoinList",
             User: "stateUser",
@@ -114,11 +113,20 @@ export default {
     },
 
     methods: {
-        ...mapActions(["getCoinList","getNextCoinList"]),
+        ...mapActions(["getCoinList", "getNextCoinList", "getUpdatedPrice", "getThisCoinPrice"]),
 
         loadMore() {
             this.getNextCoinList();
             return (this.isClicked = true);
+        },
+
+        refreshPrice() {
+            this.getUpdatedPrice();
+            return (this.isClicked = true);
+        },
+        refreshThisCoinPrice(coinId){
+            this.getThisCoinPrice(coinId);
+              return (this.isClicked = true);
         },
 
         sortCoinByKey(prop) {
@@ -228,6 +236,7 @@ ul {
     cursor: pointer;
     border-radius: 30px;
     margin-top: 20px;
+    margin-right: 20px;
 }
 @keyframes flash {
     0% {
