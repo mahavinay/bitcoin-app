@@ -13,13 +13,15 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 export default {
     name: "NavBar",
-    computed: {
+    computed: mapState({
+      user: state => state.auth.user,
         isLoggedIn() {
             return this.$store.getters.isAuthenticated;
         },
-    },
+    }),
     methods: {
         async logout() {
             await this.$store.dispatch("logout");

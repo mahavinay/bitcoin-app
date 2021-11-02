@@ -19,24 +19,12 @@
                             >
                         </th>
                         <th>COIN SYMBOL</th>
-                        <!-- <th>
-                            <a
-                                href="#"
-                                data-column="hair_color"
-                                data-order="desc"
-                                v-on:click="sortCoinByKey('hair_color')"
-                                >HAIR_COLOR</a
-                            >
-                        </th> -->
                         <th>PRICE</th>
-                        <th>EXCHANGES</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
-                    <tr
-                        v-for="(coin, rowIndex) in filteredCoins"
-                        :key="rowIndex"
-                    >
+                    <tr v-for="(coin, rowIndex) in CoinList" :key="rowIndex">
                         <td>
                             {{ coin.rank }}
                         </td>
@@ -47,15 +35,7 @@
                             {{ coin.symbol }}
                         </td>
                         <td>
-                            <div
-                                v-for="(coinPrice, rowIndex) in CoinPriceList"
-                                :key="rowIndex"
-                            >
-                                {{ coinPrice }}
-                            </div>
-                        </td>
-                        <td>
-                          
+                            {{ coin.price }}
                         </td>
                     </tr>
                 </tbody>
@@ -64,11 +44,14 @@
         <div v-else>
             <h1>Loading Coin....</h1>
         </div>
-        <div>
-            <button id="loadButton" v-on:click="displayCoin()">
-                Load more
+         <div>
+            <button id="loadButton" v-on:click="loadMore()">
+                Load More
             </button>
-        </div>
+            <button id="loadButton" v-on:click="refreshPrice()">
+                Refresh Price
+            </button>
+        </div> 
     </div>
 </template>
 
@@ -89,31 +72,44 @@ export default {
     components: {},
 
     created() {
-        this.getCoinList();
-        //this.getCoinPriceList(id);
+          this.getCoinList();
     },
 
     computed: {
+      
         ...mapGetters({
             CoinList: "stateCoinList",
             User: "stateUser",
-            CoinPriceList: "stateCoinPriceList",
         }),
-        filteredCoins() {
-            return this.CoinList.slice(0, 30);
-        },
+       
     },
 
     methods: {
-        ...mapActions(["getCoinList", "getCoinPriceList"]),
+        ...mapActions(["getCoinList","getNextCoinList","getRefreshPrice"]),
+
+        loadMore() {
+            this.getNextCoinList();
+            return (this.isClicked = true);
+        },
+
+         refreshPrice() {
+            this.getRefreshPrice(0);
+            return (this.isClicked = true);
+        },
 
         sortCoinByKey(prop) {
             if (this.order == "asc") {
-                this.CoinList.sort((a, b) => a[prop].localeCompare(b[prop]));
+                var copyCoinList = this.CoinList.sort((a, b) =>
+                    a[prop].localeCompare(b[prop])
+                );
                 this.order = "desc";
+                this.$store.commit("setCoinList", copyCoinList);
             } else {
-                this.CoinList.sort((a, b) => b[prop].localeCompare(a[prop]));
+                copyCoinList = this.CoinList.sort((a, b) =>
+                    b[prop].localeCompare(a[prop])
+                );
                 this.order = "asc";
+                this.$store.commit("setCoinList", copyCoinList);
             }
         },
     },

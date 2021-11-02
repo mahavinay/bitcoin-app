@@ -33,13 +33,13 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["LogIn"]),
+    ...mapActions(["login"]),
     async submit() {
       const User = new FormData();
       User.append("username", this.form.username);
       User.append("password", this.form.password);
       try {
-          await this.LogIn(User);
+          await this.login(User);
           this.$router.push("/coinList");
           this.showError = false
       } catch (error) {
