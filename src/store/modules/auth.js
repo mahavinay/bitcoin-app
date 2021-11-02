@@ -55,7 +55,6 @@ const actions = {
     },
 
     async getNextCoinList({ commit, state }) {
-        if (state.nextPage) {
             try {
                 var res = await axios.get(
                     "https://api.coinpaprika.com/v1/coins",
@@ -82,7 +81,6 @@ const actions = {
             } catch (err) {
                 console.log("err", err);
             }
-        }
     },
 
     async getRefreshPrice({ state, dispatch }, index) {
