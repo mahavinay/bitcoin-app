@@ -25,13 +25,9 @@ const actions = {
 
     login({ commit }, user) {
         commit("setUser", user.get("username"));
-        // commit("setCoinList", state.coinList);
-        // dispatch("getCoinList");
-        // commit("setCoinList", state.coinList);
     },
 
     async getCoinList({ commit, state }) {
-        console.log(state.coinList);
         if (!state.coinList.length) {
             commit("setLimit", state.limit);
             try {
@@ -105,9 +101,9 @@ const actions = {
 
     logout({ commit, state }) {
         let user = null;
-           state.coinList = [];
-        // console.log(state.coinList);
-        commit ("setCoinList",state.coinList );
+        state.coinList = [];
+    
+        commit("setCoinList", state.coinList);
         commit("logout", user);
     },
 };
