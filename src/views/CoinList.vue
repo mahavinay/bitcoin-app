@@ -20,7 +20,6 @@
                         </th>
                         <th>COIN SYMBOL</th>
                         <th>PRICE</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
@@ -44,14 +43,12 @@
         <div v-else>
             <h1>Loading Coin....</h1>
         </div>
-         <div>
-            <button id="loadButton" v-on:click="loadMore()">
-                Load More
-            </button>
+        <div>
+            <button id="loadButton" v-on:click="loadMore()">Load More</button>
             <button id="loadButton" v-on:click="refreshPrice()">
                 Refresh Price
             </button>
-        </div> 
+        </div>
     </div>
 </template>
 
@@ -72,27 +69,25 @@ export default {
     components: {},
 
     created() {
-          this.getCoinList();
+        this.getCoinList();
     },
 
     computed: {
-      
         ...mapGetters({
             CoinList: "stateCoinList",
             User: "stateUser",
         }),
-       
     },
 
     methods: {
-        ...mapActions(["getCoinList","getNextCoinList","getRefreshPrice"]),
+        ...mapActions(["getCoinList", "getNextCoinList", "getRefreshPrice"]),
 
         loadMore() {
             this.getNextCoinList();
             return (this.isClicked = true);
         },
 
-         refreshPrice() {
+        refreshPrice() {
             this.getRefreshPrice(0);
             return (this.isClicked = true);
         },
@@ -198,6 +193,7 @@ ul {
     cursor: pointer;
     border-radius: 30px;
     margin-top: 20px;
+    margin-right: 20px;
 }
 @keyframes flash {
     0% {
